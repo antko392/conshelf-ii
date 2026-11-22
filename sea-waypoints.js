@@ -114,12 +114,12 @@ export function createSeaWaypoints(container,places,entrances,showInfo){
   const distance=(a,b)=>Math.hypot(a[0]-b[0],a[1]-b[1],a[2]-b[2]);
   const groups=places.filter(p=>landmarks[p.id]).map(({id,name})=>{
     const data=landmarks[id],entry=entrances[id];
-    return {...data,id,main:marker(container,id,name,false,()=>showInfo(id)),
+    return {...data,id,name,openingLandmark:['reef','salon','garage'].includes(id),intro:false,main:marker(container,id,name,false,()=>showInfo(id)),
       entry:entry&&{...entry,...marker(container,id,entry.name,true,entry.activate)},near:false};
   });
   const shark={caption:'Серая рифовая акула',name:'Об акулах',ready:()=>true,
     ...marker(container,'shark','Серая рифовая акула',true,()=>showInfo('shark'))};
-  return (pos,project,boat,zone,time,hull)=>renderMarkers(container,project,place=>{
+  return (pos,project,boat,zone,time,hull,introduce)=>renderMarkers(container,project,place=>{
     const animal=sharkPosition(time),range=distance(pos,animal);
     if(range<24)place(shark,animal,range<16,2,range<6,'shark');
     else shark.button.hidden=true;
@@ -132,7 +132,13 @@ export function createSeaWaypoints(container,places,entrances,showInfo){
       }
       if(group.id==='canyon'&&(zone==='canyon'||zone==='east-canyon'))range=0;
       group.near=range<(group.near?7.8:6.8);
-      place(group.main,point,!group.near,1,true,group.id);
+      const intro=introduce&&group.openingLandmark;
+      if(group.intro!==intro){
+        group.intro=intro;
+        group.main.label.textContent=intro?'Нажми меня':group.name;
+        group.main.button.classList.toggle('intro-callout',intro);
+      }
+      place(group.main,point,intro||!group.near,intro?0:1,true,group.id);
       if(group.entry)place(group.entry,group.entry.anchor,group.near,0,group.entry.ready(),group.id);
     }
   },(point,owner)=>clearSight(pos,point,owner),52);

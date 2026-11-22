@@ -1,6 +1,6 @@
 import {setupSound} from './ambience.js?v=mobile26';
-import {renderFieldNote,fieldPhoto,photoGallery,loadCardPhoto,warmNearbyPhotos} from './field-guide.js?v=day39';
-import {createSeaWaypoints,createInteriorMarkers} from './sea-waypoints.js?v=shark38';
+import {renderFieldNote,fieldPhoto,photoGallery,loadCardPhoto,warmNearbyPhotos} from './field-guide.js?v=atlas40';
+import {createSeaWaypoints,createInteriorMarkers} from './sea-waypoints.js?v=atlas40';
 import {keelDistance,expeditionPlaces,saucerPose,remoteFree,expeditionWaterFree,cabinLadder,cabinPoint,atCabinLadder} from './expedition.js?v=berth37';
 import {createRenderer,getAsset,salonRefit,salonFolder,wetEdition,villageEdition} from './renderer.js?v=shark38';
 import {startPose,origin,angles,hatch,makeDeck,roomPoint,canSwim} from './navigation.js?v=berth37';
@@ -118,6 +118,7 @@ const waterEntrances={
 function openFieldNote(id){
   const dialog=byId('sea-info');renderFieldNote(dialog,id);openDialog(dialog);dialog.scrollTop=0;
 }
+let introPinsUntil=0;
 const seaPins=fittedHangar&&createSeaWaypoints(byId('sea-pins'),majorPlaces,waterEntrances,openFieldNote);
 byId('sea-guide').hidden=!seaPins;
 const menuPlaces=['reef','salon','garage','cabin',extendedReef?'canyon':'garden']
@@ -464,17 +465,9 @@ function interiorActions(){
     return {id:item.id,anchor,caption:item.name,name:inspectLabels[item.id],activate:item.open,
       visible:zone=>wingVisible(zone,wing,anchor),ready:()=>distance(cam.pos,item.target)<1.25};
   });
-  for(const [zone,angle] of [['berth2',angles[2]],['berth4',angles[3]]]){
-    const anchor=wingPoint(3.01,-.42,3.95,angle);
-    items.push({id:zone+'-beds',anchor,caption:'Спальные койки',name:'О жизни в «Морской звезде»',
-      visible:here=>here===zone,ready:()=>withinReach(anchor,1.5),activate:()=>openFieldNote('starfish-beds')});
-  }
-  const crewAnchor=wingPoint(3.43,.36,3.69,angles[2]);
-  items.push({id:'village-crew',anchor:crewAnchor,caption:'Жители деревни',name:'Кто жил под водой?',
-    visible:zone=>zone==='berth2',ready:()=>withinReach(crewAnchor,1.65),activate:()=>openFieldNote('village-crew')});
-  const dayAnchor=wingPoint(3.53,.25,3.76,angles[3]);
-  items.push({id:'village-day',anchor:dayAnchor,caption:'Распорядок дня',name:'Один день под водой',
-    visible:zone=>zone==='berth4',ready:()=>withinReach(dayAnchor,1.7),activate:()=>openFieldNote('village-day')});
+  const crewAnchor=wingPoint(2.94,.08,3.72,angles[3]);
+  items.push({id:'village-crew',anchor:crewAnchor,caption:'Кто жил под водой?',name:'Кто жил под водой?',
+    visible:zone=>wingVisible(zone,3,crewAnchor),ready:()=>withinReach(crewAnchor,1.5),activate:()=>openFieldNote('village-crew')});
   const cabinBeds=cabinPoint(-.54,-.15,5.01);
   items.push({id:'cabin-beds',anchor:cabinBeds,caption:'Койки океанавтов',name:'Неделя в хижине',
     visible:zone=>zone==='cabin-deck',ready:()=>withinReach(cabinBeds,1.5),activate:()=>openFieldNote('cabin-beds')});
@@ -482,10 +475,13 @@ function interiorActions(){
   items.push({id:'wet-exit',caption:'Люк в море',name:'Выйти в море',anchor:wetHatch,
     visible:zone=>wingVisible(zone,1,wetHatch),ready:()=>distance(cam.pos,deck.entry)<1.15,activate:leave});
   const hangar=garageDeck?[6.30,3.36,2.70]:[6.30,6.78,2.75];
+  const pressureAnchor=[6.95,4.59,2.40];
   const cabinHatch=cabinPoint(0,0,1.88),ladder=cabinPoint(.59,.13,3.04),upper=cabinPoint(.61,.42,4.10);
   items.push(
     ...(garageDeck?[{id:'hangar-winch',caption:'Лебёдка',name:'Осмотреть лебёдку',anchor:[6.3,5,3.97],
-      visible:zone=>zone==='garage-deck',ready:()=>withinReach([6.3,5],1.95),activate:()=>openFieldNote('winch')}]:[]),
+      visible:zone=>zone==='garage-deck',ready:()=>withinReach([6.3,5],1.95),activate:()=>openFieldNote('winch')},
+      {id:'hangar-pressure',caption:'Воздух над водой',name:'Что удерживало воду?',anchor:pressureAnchor,
+        visible:zone=>zone==='garage-deck',ready:()=>withinReach(pressureAnchor,2.30),activate:()=>openFieldNote('hangar-pressure')}]:[]),
     {id:'cabin-instruments',caption:'Пульт контроля воздуха',name:'Осмотреть пульт',anchor:cabinPoint(.78,-.67,5.06),
       visible:zone=>zone==='cabin-deck',ready:()=>withinReach(cabinPoint(.78,-.67,5.06),1.06),activate:()=>openFieldNote('atmosphere')},
     {id:'hangar-exit',caption:'Лестница в море',name:'Спуститься в море',anchor:hangar,visible:zone=>zone==='garage-deck',
@@ -567,7 +563,8 @@ function hud(project,time){
   const available=!route&&!climbing;
   const indoorFocus=interiorPins(cam.inside&&available?project:null,zone);
   const exterior=!cam.inside&&available;
-  const seaFocus=seaPins&&seaPins(cam.pos,exterior?project:null,exterior?saucerPose(time,draw.saucerMotion).look:null,zone,time,draw.calypsoHull);
+  if(introPinsUntil===null)introPinsUntil=performance.now()/1000+3.8;
+  const seaFocus=seaPins&&seaPins(cam.pos,exterior?project:null,exterior?saucerPose(time,draw.saucerMotion).look:null,zone,time,draw.calypsoHull,time<introPinsUntil);
   $.pin.hidden=true;
   if(!available){command=route?()=>{route=null;}:null;return;}
   if(cam.inside){command=indoorFocus??choosePlace;return;}
@@ -622,7 +619,11 @@ $.start.onclick=async()=>{
     interiorPins=createInteriorMarkers(byId('object-pins'),interiorActions());reset();
     showProgress(100,'Мир готов');
     await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
-    await transitionTo(()=>{firstControls.hidden=false;$.intro.hidden=true;$.hud.hidden=false;running=true;$.sea.focus();requestAnimationFrame(frame);},true);
+    await transitionTo(()=>{
+      firstControls.hidden=false;$.intro.hidden=true;$.hud.hidden=false;running=true;$.sea.focus();
+      if(seaPins&&!cam.inside&&distance(cam.pos,villageView.pos)<.01)introPinsUntil=null;
+      requestAnimationFrame(frame);
+    },true);
     warmNearbyPhotos();
   }catch(err){loadingMeter.hidden=true;sound.stop();console.error(err);$.load.textContent=err.message.includes('WebGL')?err.message:'Не удалось загрузить сцену. Проверьте соединение и попробуйте ещё раз.';$.start.disabled=false;$.start.textContent='Попробовать снова';}
 };

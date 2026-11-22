@@ -1,4 +1,6 @@
 export const photos = {
+  "expedition-map": {"asset":"assets/field-guide/expedition-map.svg","caption":"Место экспедиции «Кон-Шельф II» у побережья Судана, 1963 год","credit":"Карта реконструкции. Береговая линия — Natural Earth."},
+  "pressure-section": {"asset":"assets/field-guide/pressure-section.svg","caption":"Разрез ангара: на границе воздуха и воды давления равны","credit":"Пояснительная схема реконструкции по отчёту Жака-Ива Кусто."},
   "film-starfish-bunks": {"caption":"Двухъярусные койки в спальне «Морской звезды»","time":"40:38","film":true},
   "film-cabin-bunks": {"caption":"Двое океанавтов на койках в глубоководной хижине","time":"39:50","film":true},
   "village": {

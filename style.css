@@ -137,6 +137,11 @@ dialog{color:var(--ink);background:#f2efe3;border:0;border-radius:16px;padding:0
 #sea-info h2{padding-right:34px}
 .sea-marker{position:absolute;top:0;left:0;width:40px;height:40px;padding:0;background:none;color:#fff6d9;border:0;display:grid;place-items:center}
 .sea-marker i{display:block;width:15px;height:15px;border-radius:50%;background:#f9ce77;border:2px solid #193e45;box-shadow:0 0 0 1.5px #ffe1a7,0 2px 5px #05252d99}
+.sea-marker.intro-callout span{background:#f9ce77;color:#13363a}
+@media(prefers-reduced-motion:no-preference){
+  .sea-marker.intro-callout i::after{content:'';position:absolute;inset:-4px;border:2px solid #ffd37e;border-radius:50%;animation:landmark-ring 1.12s ease-out 3}
+  @keyframes landmark-ring{from{transform:scale(.9);opacity:1}to{transform:scale(2.35);opacity:0}}
+}
 .sea-marker.minor{width:32px;height:32px;color:#eefffc}
 .sea-marker.minor i{width:9px;height:9px;border:1.5px solid #13333e;background:#b5efe0;box-shadow:0 0 0 1px #dbfff2}
 .sea-marker:disabled{opacity:1;cursor:default}
