@@ -220,7 +220,7 @@ dialog .close:focus-visible{outline:2px solid #50847b;outline-offset:2px}
 .field-body details nav{display:flex;gap:.25rem .9rem;flex-wrap:wrap;margin:.7rem 0}
 .field-body details ul{margin:.45rem 0 0;padding-left:1.15rem}
 .field-body details li+li{margin-top:.3rem}
-.field-body figure+p,.field-body+p{margin-top:1em}
+.field-gallery+p,.field-body figure+p,.field-body+p{margin-top:1rem}
 
 figure.salon-photo{margin:0}
 .salon-photo figcaption{background:#f2efe3;padding:6px clamp(20px,4vw,32px) 0;color:#48615d;font-size:.76rem;line-height:1.45}

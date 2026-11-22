@@ -49,7 +49,7 @@ function renderMarkers(container,project,collect,canSee,focusRadius){
   function place(pin,point,show,priority,enabled=true,owner){
     const xy=project(point);
     const button=pin.button,action=!!pin.ready&&enabled;
-    const onScreen=xy&&xy[0]>=14&&xy[0]<=w-14&&xy[1]>=65&&xy[1]<=h-28&&canSee(point,owner);
+    const onScreen=xy&&xy[0]>=14&&xy[0]<=w-14&&xy[1]>=65&&xy[1]<=h-28&&(pin.alwaysVisible||canSee(point,owner));
     button.disabled=!enabled;
     if(!onScreen){button.hidden=true;return;}
     button.hidden=false;
@@ -81,7 +81,7 @@ function renderMarkers(container,project,collect,canSee,focusRadius){
         }
         if(position)break;
       }
-      if(!position&&action){
+      if(!position&&(action||pin.alwaysVisible)){
         const left=Math.max(5,Math.min(w-width-5,x-width/2));
         const top=Math.max(66,Math.min(h-height-22,y-height/2));
         position=[left-x,top-y];
@@ -114,7 +114,7 @@ export function createSeaWaypoints(container,places,entrances,showInfo){
   const distance=(a,b)=>Math.hypot(a[0]-b[0],a[1]-b[1],a[2]-b[2]);
   const groups=places.filter(p=>landmarks[p.id]).map(({id,name})=>{
     const data=landmarks[id],entry=entrances[id];
-    return {...data,id,name,openingLandmark:['reef','salon','garage'].includes(id),intro:false,main:marker(container,id,name,false,()=>showInfo(id)),
+    return {...data,id,name,openingLandmark:['reef','salon','garage'].includes(id),intro:false,main:{...marker(container,id,name,false,()=>showInfo(id)),alwaysVisible:id==='cabin'},
       entry:entry&&{...entry,...marker(container,id,entry.name,true,entry.activate)},near:false};
   });
   const shark={caption:'Серая рифовая акула',name:'Об акулах',ready:()=>true,
@@ -138,7 +138,7 @@ export function createSeaWaypoints(container,places,entrances,showInfo){
         group.main.label.textContent=intro?'Нажми меня':group.name;
         group.main.button.classList.toggle('intro-callout',intro);
       }
-      place(group.main,point,intro||!group.near,intro?0:1,true,group.id);
+      place(group.main,point,group.main.alwaysVisible||intro||!group.near,group.main.alwaysVisible||intro?0:1,true,group.id);
       if(group.entry)place(group.entry,group.entry.anchor,group.near,0,group.entry.ready(),group.id);
     }
   },(point,owner)=>clearSight(pos,point,owner),52);

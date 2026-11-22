@@ -1,6 +1,6 @@
 import {setupSound} from './ambience.js?v=mobile26';
 import {renderFieldNote,fieldPhoto,photoGallery,loadCardPhoto,warmNearbyPhotos} from './field-guide.js?v=atlas40';
-import {createSeaWaypoints,createInteriorMarkers} from './sea-waypoints.js?v=atlas40';
+import {createSeaWaypoints,createInteriorMarkers} from './sea-waypoints.js?v=cabin41';
 import {keelDistance,expeditionPlaces,saucerPose,remoteFree,expeditionWaterFree,cabinLadder,cabinPoint,atCabinLadder} from './expedition.js?v=berth37';
 import {createRenderer,getAsset,salonRefit,salonFolder,wetEdition,villageEdition} from './renderer.js?v=shark38';
 import {startPose,origin,angles,hatch,makeDeck,roomPoint,canSwim} from './navigation.js?v=berth37';
