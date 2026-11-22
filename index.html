@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#062932">
+<title>Кон-Шельф II — подводная деревня Кусто</title>
+<link rel="icon" href="data:,"><link rel="stylesheet" href="style.css?v=photo35">
+</head>
+<body>
+<main id="expedition">
+  <canvas id="sea" tabindex="-1" aria-label="Трёхмерная прогулка по подводной деревне"></canvas>
+  <section id="intro" aria-labelledby="title">
+    <picture class="cover" aria-hidden="true">
+      <source media="(max-width: 700px)" srcset="assets/cover-mobile.webp">
+      <img src="assets/cover-expedition.webp" alt="" fetchpriority="high">
+    </picture>
+    <div class="intro-copy">
+      <div class="eyebrow"><i></i> ШААБ-РУМИ <b> / </b> 1963</div>
+      <h1 id="title">Кон-Шельф <em>II</em></h1>
+      <p>В 1963 году команда Жака-Ива Кусто жила и работала на дне Красного моря. Я воссоздал эту подводную деревню, чтобы вы могли её исследовать.</p>
+      <p class="interpretation">Это художественная реконструкция. Некоторые детали могут отличаться от исторических.</p>
+      <div class="intro-actions">
+        <button class="primary" id="start">Начать погружение</button>
+        <a class="author-link" href="https://www.instagram.com/ant.filmmaker/" target="_blank" rel="noopener noreferrer" aria-label="Подписаться на автора в Instagram">
+          Подписаться на автора
+          <svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 15 15 5M6 5h9v9"/></svg>
+        </a>
+      </div>
+      <div id="load" role="status"></div>
+      <div id="loading-meter" hidden><progress id="load-progress" aria-label="Загрузка мира" max="100" value="0"></progress><span id="load-percent" aria-hidden="true">0%</span></div>
+    </div>
+  </section>
+  <div id="dive-transition" hidden aria-hidden="true"></div>
+  <div id="hud" hidden>
+    <header class="game-head"><div class="station"><span class="eyebrow">КОН-ШЕЛЬФ II</span><strong id="location">Подводная деревня</strong><small id="frame-rate" hidden></small></div><div class="instruments"><button id="action" aria-haspopup="dialog" aria-controls="places" aria-label="Выбрать локацию">Локации</button><button id="sound" class="round" type="button" aria-label="Звук прогулки" aria-pressed="false" title="Включить звук"><svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 9h4l5-4v14l-5-4H3z"/><path class="sound-off" d="m16 10 5 5m0-5-5 5"/><path class="sound-on" d="M16 9a5 5 0 0 1 0 6m3-9a9 9 0 0 1 0 12"/></svg></button><button id="help" class="round" aria-label="Управление и маршрут">?</button></div></header>
+    <div id="hint"></div>
+    <div id="door-title" hidden></div>
+    <div id="sea-pins" hidden></div>
+    <div id="object-pins"></div>
+    <button id="pin" hidden><i></i><span></span></button>
+    <div id="move-pad" role="group" aria-label="Движение">
+      <button id="forward" type="button"><span>Вперёд</span></button>
+      <button id="backward" type="button"><span>Назад</span></button>
+    </div>
+    <div id="first-controls" hidden>
+      <div class="touch"><p><b aria-hidden="true">↑ ↓</b> Удерживайте стрелку для движения</p><p><b aria-hidden="true">↔</b> Ведите пальцем по экрану для обзора</p></div>
+      <div class="desktop"><p><b>WASD</b> Движение</p><p>Для обзора зажмите кнопку мыши и потяните</p></div>
+    </div>
+    <div class="controls-caption"><span class="desktop">WASD · движение &nbsp; / &nbsp; Shift · быстрее &nbsp; / &nbsp; мышь с зажатой кнопкой · обзор</span></div>
+  </div>
+  <dialog id="sea-info" aria-labelledby="sea-info-title"><article>
+    <button class="close round" aria-label="Закрыть справку">×</button>
+    <h2 id="sea-info-title"></h2><div class="field-body"></div>
+    <button class="primary resume">Вернуться к погружению</button>
+  </article></dialog>
+  <dialog id="places" aria-labelledby="places-title">
+    <article><header><h2 id="places-title">Локации</h2><button class="close round" aria-label="Закрыть локации">×</button></header>
+      <div class="place-columns" id="major-places"></div>
+    </article></dialog>
+  <dialog id="console-notes" aria-labelledby="console-title">
+    <figure class="photo salon-photo"><img width="880" height="662" decoding="async" data-src="assets/salon8/radio.webp" alt="Оператор держит ручной микрофон у самописца и катушечного магнитофона"><figcaption>Кадр из фильма Жака-Ива Кусто «Мир без солнца» (1964)</figcaption></figure>
+    <button class="close round" aria-label="Закрыть справку о пульте">×</button>
+    <article><div class="eyebrow"><i></i> ОБЩИЙ ЗАЛ</div><div class="console-heading"><h2 id="console-title">На связи с поверхностью</h2><button type="button" id="tape-deck" aria-label="Музыка магнитофона" aria-pressed="true" title="Остановить магнитофон">
+      <svg viewBox="0 0 64 50" aria-hidden="true" focusable="false">
+        <defs><g id="spool"><circle r="10.6" fill="#c1bfb0" stroke="#343d3a"/><circle r="8.4" fill="#514438"/>
+          <g fill="#bbb8a8"><path id="spoke" d="M-2 0Q-3-4 0-9L3-9Q0-5 2 0Z"/><use href="#spoke" transform="rotate(120)"/><use href="#spoke" transform="rotate(240)"/></g>
+          <circle r="2.5" fill="#ddd6b7"/><circle r="1" fill="#333e3b"/></g></defs>
+        <rect x="1" y="2" width="62" height="46" rx="4" fill="#343e3b"/>
+        <rect x="4" y="4" width="56" height="39" rx="2" fill="#8d9388"/>
+        <path d="M10 19 15 32 26 35H40L49 32 55 19" fill="none" stroke="#473323" stroke-width="1.5"/>
+        <g transform="translate(18 17)"><g class="tape-reel"><use href="#spool"/></g></g>
+        <g transform="translate(46 17)"><g class="tape-reel takeup"><use href="#spool"/></g></g>
+        <rect x="25" y="29" width="14" height="6" rx="1.5" fill="#303a36"/>
+        <path d="M9 38h4m2 0h4m2 0h4" stroke="#e6e0cc" stroke-width="3"/>
+        <circle class="pilot" cx="51" cy="39" r="2"/>
+      </svg></button></div>
+    <p>За общим столом ужинали, а в нескольких шагах от него дежурил оператор. На угловой пульт поступало изображение с трёх камер. По телефону и переговорной связи отсюда связывались с судами наверху.</p>
+    <p>Перед выходом в море каждый океанавт запускал таймер рядом со своей фамилией. В зале было видно, сколько времени товарищ провёл за бортом.</p>
+    <details class="story-source"><summary>Источник</summary><a href="https://www.nationalgeographic.com/history/article/jacques-cousteau-underwater-living" target="_blank" rel="noopener">Отчёт Кусто в National Geographic</a></details><button class="primary resume">Вернуться в зал</button></article></dialog>
+  <dialog class="salon-story" id="claude-notes" aria-labelledby="claude-title">
+    <div class="field-body story-gallery" data-gallery="film-claude-perch film-claude-hand"></div>
+    <button class="close round" aria-label="Закрыть справку">×</button>
+    <article><div class="eyebrow"><i></i> ОБЩИЙ ЗАЛ</div><h2 id="claude-title">Клод на жердочке</h2>
+      <p>У Клода в общем зале была своя жердочка с двумя кормушками. На кадре видны светлое кольцо вокруг глаза, жёлтое пятнышко над клювом и красные пёрышки на сгибе крыла.</p><p>В другой сцене Клода поднесли к иллюминатору. По одну сторону стекла сидела птица, по другую проплывали рыбы.</p><button class="primary resume">Вернуться в зал</button></article>
+  </dialog>
+  <dialog class="salon-story" id="table-notes" aria-labelledby="table-title">
+    <figure class="photo salon-photo"><img width="880" height="663" decoding="async" data-src="assets/salon8/table.webp" alt="Океанавт печатает за столом под иллюминаторами"><figcaption>Кадр из фильма Жака-Ива Кусто «Мир без солнца» (1964)</figcaption></figure>
+    <button class="close round" aria-label="Закрыть справку">×</button>
+    <article><div class="eyebrow"><i></i> ОБЩИЙ ЗАЛ</div><h2 id="table-title">За общим столом</h2>
+      <p>К обеду экипаж собирался за одним столом в центре дома. Отсюда было видно море, а блюда приносили из кухни в соседнем крыле.</p><p>Стол служил и для работы. На кадре океанавт сидит на мягком сиденье под иллюминатором, перед ним переносная пишущая машинка, бумаги и настольная лампа.</p><button class="primary resume">Вернуться в зал</button></article>
+  </dialog>
+  <dialog class="salon-story" id="windows-notes" aria-labelledby="windows-title">
+    <div class="field-body story-gallery" data-gallery="film-claude-fish film-salon-port"></div>
+    <button class="close round" aria-label="Закрыть справку">×</button>
+    <article><div class="eyebrow"><i></i> ОБЩИЙ ЗАЛ</div><h2 id="windows-title">Вид из «Морской звезды»</h2>
+      <p>У двух соседних иллюминаторов можно было наблюдать за рифом прямо из жилого отсека. На кадре океанавт поднёс Клода к стеклу, за которым собрались рыбы.</p><p>В прогулке к окнам ведёт проход вокруг обеденного стола. Из промежутка между креслами можно заглянуть в оба иллюминатора.</p><button class="primary resume">Вернуться в зал</button></article>
+  </dialog>
+  <dialog class="salon-story" id="shower-notes" aria-labelledby="shower-title">
+    <figure class="photo salon-photo"><img width="880" height="656" decoding="async" data-src="assets/salon9/shower.webp" alt="Вид из дверного проёма. Справа океанавт под душем, слева на вешалке гидрокостюм"><figcaption>Кадр из фильма Жака-Ива Кусто «Мир без солнца» (1964)</figcaption></figure>
+    <button class="close round" aria-label="Закрыть справку">×</button>
+    <article><div class="eyebrow"><i></i> МОКРЫЙ ОТСЕК</div><h2 id="shower-title">Душ у входа в море</h2>
+      <p>Из общего зала видна лейка справа под сводом. Светлая шторка отодвинута по потолочному карнизу. Напротив сушатся гидрокостюмы.</p>
+      <button id="shower-switch" class="primary">Включить воду</button></article>
+  </dialog>
+  <dialog class="salon-story" id="gear-notes" aria-labelledby="gear-title">
+    <figure class="photo salon-photo"><img width="880" height="659" decoding="async" data-src="assets/salon9/equipment.webp" alt="Океанавт в серебристом гидрокостюме с баллонами и парой дыхательных шлангов"><figcaption>Кадр из фильма Жака-Ива Кусто «Мир без солнца» (1964)</figcaption></figure>
+    <button class="close round" aria-label="Закрыть справку">×</button>
+    <article><div class="eyebrow"><i></i> МОКРЫЙ ОТСЕК</div><h2 id="gear-title">Перед погружением</h2>
+      <p>За баллонами у плеч водолаза видны два гофрированных дыхательных шланга. Рядом на перекладине висят маска и запасной костюм. В море спускались прямо отсюда, через круглый проём в настиле.</p>
+      <button class="primary resume">Вернуться в отсек</button></article>
+  </dialog>
+  <dialog id="notes">
+    <figure class="photo salon-photo"><img width="880" height="662" decoding="async" data-src="assets/field-guide/film-lab.webp" alt="Океанавт за работой у аквариума в лаборатории"><figcaption>Кадр из фильма Жака-Ива Кусто «Мир без солнца» (1964)</figcaption></figure>
+    <button class="close round" aria-label="Закрыть справку">×</button>
+    <article><div class="eyebrow"><i></i> АКВАРИУМ</div><h2>Исследования на рифе</h2>
+    <p>Жизнь на дне позволяла команде выходить к рифу прямо из дома. Живых обитателей можно было наблюдать в море, а затем рассматривать в лаборатории всего в нескольких метрах от места сбора.</p>
+    <p>Океанавты приносили рыб в прозрачных мешках с морской водой и выпускали в подводные садки. Профессор Весьер сам подплывал к садкам и выбирал экземпляры для лаборатории. Часть рыб отправили в аквариум Монако.</p>
+    <details class="story-source"><summary>Источник</summary><a href="https://www.nationalgeographic.com/history/article/jacques-cousteau-underwater-living" target="_blank" rel="noopener">Отчёт Кусто в National Geographic</a></details>
+    <button id="look-through" class="secondary" hidden>Посмотреть в окуляры</button>
+    <button class="primary resume">Продолжить прогулку</button></article>
+  </dialog>
+  <dialog id="ocular" aria-labelledby="sample-title">
+    <button class="close round" aria-label="Отойти от микроскопа">×</button>
+    <article><div class="eyebrow">МИКРОСКОП</div><h2 id="sample-title">Проба планктона</h2>
+      <div class="ocular-field"><img id="sample-image" alt="Увеличенный вид прозрачного планктонного организма с тонкими отростками"></div>
+      <p>В капле морской воды можно встретить одноклеточные водоросли, простейших и крошечных животных. Вместе они входят в состав планктона и дрейфуют с течением. В окулярах видны прозрачное тело и тонкие отростки одного из таких животных.</p>
+      <button class="primary resume">Вернуться к столу</button>
+    </article>
+  </dialog>
+  <dialog id="galley-notes" aria-labelledby="galley-title">
+    <button class="close round" aria-label="Закрыть рассказ о кухне">×</button>
+    <article><div class="eyebrow"><i></i> ПЛИТА</div><h2 id="galley-title">Обед под водой</h2><div class="field-body" id="galley-photo"></div>
+    <p>На «Морской звезде» за стол отвечал Пьер Гильбер, которого команда звала Пьеро. Продукты доставляли с судна, а Пьеро готовил в том же крыле, где биологи разбирали улов.</p>
+    <p>У Пьеро был постоянный гость. По рассказу Кусто, стоило повару постучать кольцом по иллюминатору, как приплывал крупный спинорог. Рыба ждала у нижнего люка и брала угощение из рук.</p>
+    <details class="story-source"><summary>Источник</summary><a href="https://www.nationalgeographic.com/history/article/jacques-cousteau-underwater-living" target="_blank" rel="noopener">Отчёт Кусто в National Geographic</a></details>
+    <button class="primary resume">Вернуться к плите</button></article>
+  </dialog>
+  <dialog id="guide"><button class="close round" aria-label="Закрыть управление">×</button><article><div class="eyebrow"><i></i> КОН-ШЕЛЬФ II</div><h2>Как перемещаться</h2>
+  <p class="desktop">WASD или стрелки ↑ и ↓ — движение. Тяните мышью по сцене или используйте ← и → для поворота. Удерживайте Shift, чтобы идти или плыть вдвое быстрее. В воде пробел поднимает, C опускает. E открывает ближайшую точку или список локаций.</p>
+  <p class="touch">Ведите пальцем по сцене, чтобы осмотреться. Для движения удерживайте «Вперёд» или «Назад» слева внизу. Поворачивайте другим пальцем. В воде смотрите вверх для подъёма и вниз для погружения. Отпустите кнопку, чтобы остановиться.</p>
+  <p id="sea-guide" hidden>Крупная точка открывает рассказ о месте. Подплывите ближе, чтобы увидеть подписи у маленьких точек. У самого люка подпись превратится в кнопку входа.</p>
+  <p id="legacy-guide">Нижний люк ведёт в мокрый отсек. Пройдите через салон в соседнее крыло к микроскопу. Название места в правом верхнем углу открывает список быстрых переходов.</p>
+  <p id="wing-guide" hidden>Название отсека видно над входом. Подойдите к отметке предмета, люка или лестницы. Когда подпись станет кнопкой, нажмите на неё. Выбрать локацию можно в правом верхнем углу.</p>
+  <fieldset id="wing-stops" hidden><legend>Пройти к предмету</legend></fieldset>
+  <button class="primary resume">Продолжить прогулку</button><button class="secondary" id="reset">Вернуться к началу погружения</button></article></dialog>
+</main>
+<script type="module" src="app.js?v=day39"></script>
+</body></html>

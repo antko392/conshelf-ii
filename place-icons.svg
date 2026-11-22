@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg">
+  <symbol id="salon" viewBox="0 0 64 52">
+    <g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+      <path d="m7 20 15-6 9 3 12-8 9 3 1 4-11 9 14 5-1 6-6 2-15-5-12 9-8-2-1-4 9-8-16-3z" fill="currentColor" fill-opacity=".15"/>
+      <path d="m7 20 17 4m-10 12 14-10m14-3-9 3 17 7 6-3m-5 3-1 5m-14-8-2 3m-11-16 9 3 13-9"/>
+      <path d="m15 23 4 1m22 7 4 1m-18-4 3-2"/>
+    </g>
+  </symbol>
+  <symbol id="garage" viewBox="0 0 64 52">
+    <g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M7 33C10 20 20 11 32 8c13 4 22 13 25 25-11 4-39 4-50 0Z" fill="currentColor" fill-opacity=".16"/>
+      <path d="M7 30c12 4 38 4 50 0M32 8c-8 6-13 14-15 23m15-23c7 5 12 13 15 23M16 35l-2 8m36-8 2 8m-41 0h6m32 0h6M30 35v7m4-7v7m-4-3h4"/>
+      <g fill="currentColor" stroke="none"><circle cx="21" cy="24" r="1.8"/><circle cx="29" cy="23" r="2"/><circle cx="37" cy="23.5" r="2"/><circle cx="44.5" cy="25" r="1.6"/></g>
+    </g>
+  </symbol>
+  <symbol id="reef" viewBox="0 0 64 52">
+    <g fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M3 42q11-4 20-1t20 0q8-3 18 0" opacity=".65"/>
+      <path d="M5 25q0-3 4-4h22q4 1 4 4v5q0 3-4 3H9q-4-1-4-4zM39 32q3-11 11-15 8 4 11 15-10 3-22 0Z" fill="currentColor" fill-opacity=".17"/>
+      <path d="m11 33-2 7m19-7 2 7m14-6-1 6m13-6 2 6M14 21v-3h8v3M44 30q2-9 6-13m-2 11h2m3 0h2M11 25h5v4h-5zm10 0h5v4h-5z"/>
+      <path d="M5 12q4-3 8 0t8 0m13-1q3-3 6 0t6 0" opacity=".5"/>
+    </g>
+  </symbol>
+  <symbol id="cabin" viewBox="0 0 64 52">
+    <g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M21 15q0-7 11-9 11 2 11 9v15q-11 4-22 0Z" fill="currentColor" fill-opacity=".16"/>
+      <path d="M21 15q11 3 22 0m-22 9q11 3 22 0m-19 7v9h16v-9m-12 2v7m8-7v7m-7-3h5m-5 3v4m5-4v4M20 28 9 43m35-15 10 15"/>
+      <path d="M26 18h4v4h-4zm9 0h3v3h-3zM6 44l6-1m39 0 6 1"/>
+    </g>
+  </symbol>
+  <symbol id="coral" viewBox="0 0 64 52">
+    <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M31 42c1-7 1-12 0-17s0-10 1-15m-1 23c-8-3-12-8-12-18m12 10c7-3 11-9 12-15m-11 27c11-2 16-7 20-15" stroke-width="3"/>
+      <path d="M20 24c-5-1-8-4-9-9m13 14c1-4 0-7-1-9m9 1-5-7-1-6m5 9 6-7V6m3 13 7-2 2-4m-5 20 1-8m4 4 7-1 3-4M8 36q2 3 8 3m-1 0-2-5m7 10q10-5 21-1" stroke-width="2"/>
+    </g>
+  </symbol>
+</svg>
